@@ -125,13 +125,6 @@ glm::vec2 ProController::get_rotation() const
 	return result;
 }
 
-glm::vec2 ProController::get_trigger() const
-{
-	const auto left = get_axis_value(kButtonId_ZL);
-	const auto right = get_axis_value(kButtonId_ZR);
-	return { left, right };
-}
-
 bool ProController::set_default_mapping(const std::shared_ptr<ControllerBase>& controller)
 {
 	std::vector<std::pair<uint64, uint64>> mapping;

@@ -52,7 +52,6 @@ public:
 
 	glm::vec2 get_axis() const override;
 	glm::vec2 get_rotation() const override;
-	glm::vec2 get_trigger() const override;
 
 
 	static uint32 s_get_emulated_button_flag(uint32 id);

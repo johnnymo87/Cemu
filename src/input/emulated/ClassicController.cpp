@@ -120,13 +120,6 @@ glm::vec2 ClassicController::get_rotation() const
 	return length(result) > 1.0f ? normalize(result) : result;
 }
 
-glm::vec2 ClassicController::get_trigger() const
-{
-	const auto left = get_axis_value(kButtonId_ZL);
-	const auto right = get_axis_value(kButtonId_ZR);
-	return { left, right };
-}
-
 bool ClassicController::set_default_mapping(const std::shared_ptr<ControllerBase>& controller)
 {
 	std::vector<std::pair<uint64, uint64>> mapping;

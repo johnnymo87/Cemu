@@ -54,7 +54,6 @@ public:
 
 	glm::vec2 get_axis() const override;
 	glm::vec2 get_rotation() const override;
-	glm::vec2 get_trigger() const override;
 
 	void load(const pugi::xml_node& node) override;
 	void save(pugi::xml_node& node) override;

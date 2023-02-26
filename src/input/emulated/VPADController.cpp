@@ -499,13 +499,6 @@ glm::vec2 VPADController::get_rotation() const
 	return length(result) > 1.0f ? normalize(result) : result;
 }
 
-glm::vec2 VPADController::get_trigger() const
-{
-	const auto left = get_axis_value(kButtonId_ZL);
-	const auto right = get_axis_value(kButtonId_ZR);
-	return {left, right};
-}
-
 bool VPADController::set_default_mapping(const std::shared_ptr<ControllerBase>& controller)
 {
 	std::vector<std::pair<uint64, uint64>> mapping;

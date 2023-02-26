@@ -50,7 +50,6 @@ public:
 
 	virtual glm::vec2 get_axis() const = 0;
 	virtual glm::vec2 get_rotation() const = 0;
-	virtual glm::vec2 get_trigger() const = 0;
 
 	void start_rumble();
 	void stop_rumble();

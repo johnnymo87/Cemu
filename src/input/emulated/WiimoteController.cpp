@@ -92,11 +92,6 @@ glm::vec2 WiimoteController::get_rotation() const
 	return {};
 }
 
-glm::vec2 WiimoteController::get_trigger() const
-{
-	return {};
-}
-
 void WiimoteController::load(const pugi::xml_node& node)
 {
 	base_type::load(node);

@@ -62,7 +62,6 @@ public:
 
 	glm::vec2 get_axis() const override;
 	glm::vec2 get_rotation() const override;
-	glm::vec2 get_trigger() const override;
 
 	bool is_mic_active() { return m_mic_active; }
 	bool is_screen_active() { return m_screen_active; }
