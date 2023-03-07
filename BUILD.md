@@ -22,6 +22,12 @@
    - [Build Cemu using CMake](#build-cemu-using-cmake)
 - [Updating Cemu and source code](#updating-cemu-and-source-code)
 
+## Table of Contents
+
+* [Windows](#windows)
+* [Linux](#linux)
+* [Mac](#macos)
+
 ## Windows
 
 Prerequisites:
@@ -146,41 +152,125 @@ don't support the C++20 feature set required, so either install LLVM from Homebr
 you have a recent enough version of Xcode. Xcode 15 is known to work. The OpenGL graphics API isn't
 supported on macOS, so Vulkan must be used through the Molten-VK compatibility layer.
 
-### Installing brew
+The rest of this section will walk you through the process of setting up and building Cemu on a Mac, whether it's an Intel or Apple Silicon machine.
 
-1. `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-2. Set up the Homebrew shell environment:
-   1. **On an Intel Mac:** `eval "$(/usr/local/Homebrew/bin/brew shellenv)"`
-   2. **On an Apple Silicon Mac:** eval `"$(/opt/homebrew/bin/brew shellenv)"`
+### First time setup before compiling Cemu for Apple Silicon Macs
 
-### Installing Tool Dependencies
+1. Install Rosetta 2.
 
-The native versions of these can be used regardless of what type of Mac you have.
+   ```bash
+   softwareupdate --install-rosetta
+   ```
 
-`brew install git cmake ninja nasm automake libtool`
+1. Run an x86_64 shell.
 
-### Installing Library Dependencies
+   ```bash
+   arch -x86_64 zsh
+   ```
 
-**On Apple Silicon Macs, Rosetta 2 and the x86_64 version of Homebrew must be used to install these dependencies:**
-1. `softwareupdate --install-rosetta` # Install Rosetta 2 if you don't have it. This only has to be done once
-2. `arch -x86_64 zsh` # run an x64 shell
-3. `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-4. `eval "$(/usr/local/Homebrew/bin/brew shellenv)"`
+1. Unload your arm64-specific brew from your `PATH` so that it doesn't confuse your x86_64-specific installation of brew.
 
-Then install the dependencies:
+   ```bash
+   export PATH=`printf '%s:' $(echo $PATH | tr ':' '\n' | grep -iv "^\/opt\/homebrew\/")`
+   ```
 
-`brew install boost molten-vk`
+   * **Note:** This step is only necessary if you have an arm64-specific brew installed. To check, do `echo $PATH | tr ':' '\n'`, and check if there's any mention of `/opt/homebrew`.
+1. Now continue onto the `First time setup for Intel Macs` section. Note that you should definitely do the `Install brew` step **even if** you have an arm64-specific brew already installed. This will install a second one, specific to x86_64.
 
-### Build Cemu using CMake
+### First time setup before compiling Cemu for either kind of Mac
 
-1. `git clone --recursive https://github.com/cemu-project/Cemu`
-2. `cd Cemu`
-3. `cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DCMAKE_OSX_ARCHITECTURES=x86_64 -G Ninja`
-4. `cmake --build build`
-5. You should now have a Cemu executable file in the /bin folder, which you can run using `./bin/Cemu_release`.
+1. Install brew.
 
-#### Troubleshooting steps
-- If step 3 gives you an error about not being able to find ninja, try appending `-DCMAKE_MAKE_PROGRAM=/usr/local/bin/ninja` to the command and running it again.
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+1. Initialize brew.
+
+   ```bash
+   eval "$(/usr/local/bin/brew shellenv)"
+   ```
+
+1. Install dependencies.
+
+   ```bash
+   brew install boost git cmake llvm nasm ninja pkg-config molten-vk
+   ```
+
+1. Clone the Cemu repository with the `--recursive` flag to also clone the dependencies that it submodules.
+
+   ```bash
+   git clone --recursive https://github.com/cemu-project/Cemu
+   ```
+
+1. Change into the cloned repository directory.
+
+   ```bash
+   cd Cemu
+   ```
+
+1. Run cmake to generate the build files.
+
+   ```bash
+   cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ -G Ninja
+   ```
+
+### Every time setup before compiling Cemu for either kind of Mac
+
+Some of the following steps should be done every time you wish to compile Cemu, others should be done on an as-needed basis. The latter are marked with a :soap: emoji.
+
+1. If you have an Apple Silicon Mac, run an x86_64 shell.
+
+   ```bash
+   arch -x86_64 zsh
+   ```
+
+1. If you have an Apple Silicon Mac, and you have an arm64-specific brew installed, unload your arm64-specific brew from your `PATH` so that it doesn't confuse your x86_64-specific installation of brew.
+
+   ```bash
+   export PATH=`printf '%s:' $(echo $PATH | tr ':' '\n' | grep -iv "^\/opt\/homebrew\/")`
+   ```
+
+1. Initialize brew.
+
+   ```bash
+   eval "$(/usr/local/bin/brew shellenv)"
+   ```
+
+1. :soap: Update dependencies.
+
+   ```bash
+   brew update && brew upgrade
+   ```
+
+   * **Note:** This step is optional and only needs to be done if there are updates to the dependencies installed via brew.
+1. :soap: Update the Cemu repository and its submodules.
+
+   ```bash
+   git pull --recurse-submodules
+   ```
+
+   * **Note:** This step is optional and only needs to be done if there are updates to the Cemu repository or its submodules.
+
+1. :soap: If during the previous step you see that you pulled in changes to `CMakeLists.txt`, rerun cmake to regenerate the build files.
+
+   ```bash
+   cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ -G Ninja
+   ```
+
+### Compile Cemu using cmake and clang for either kind of Mac
+
+1. Run cmake to build Cemu using clang.
+
+   ```bash
+   cmake --build build
+   ```
+
+1. You should now have a Cemu executable file in the /bin folder, which you can run using:
+
+   ```bash
+   ./bin/Cemu_release
+   ```
 
 ## Updating Cemu and source code
 1. To update your Cemu local repository, use the command `git pull --recurse-submodules` (run this command on the Cemu root).
