@@ -53,9 +53,8 @@ public:
 	size_t get_highest_mapping_id() const override { return kButtonId_Max; }
 	bool is_axis_mapping(uint64 mapping) const override { return mapping >= kButtonId_StickL_Up && mapping <= kButtonId_StickR_Right; }
 
-	glm::vec2 get_axis() const override;
-	glm::vec2 get_rotation() const override;
-	glm::vec2 get_trigger() const override;
+	glm::vec2 get_axis(const PhysicalControllerPtr& physical_controller) const override;
+	glm::vec2 get_rotation(const PhysicalControllerPtr& physical_controller) const override;
 
 	static uint32 s_get_emulated_button_flag(uint32 id);
 

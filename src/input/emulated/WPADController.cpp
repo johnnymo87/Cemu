@@ -67,16 +67,22 @@ uint32 WPADController::get_emulated_button_flag(WPADDataFormat format, uint32 id
 void WPADController::WPADRead(WPADStatus_t* status)
 {
 	controllers_update_states();
+	// std::shared_lock lock(m_mutex);
+	// for (const auto& controller : m_controllers)
 	uint32 button = 0;
+	// Here
 	for (uint32 i = 1; i < get_highest_mapping_id(); ++i)
 	{
+		// Here
 		if (is_mapping_down(i))
 		{
+			// Here
 			const uint32 value = get_emulated_button_flag(m_data_format, i);
 			button |= value;
 		}
 	}
 
+	// Here
 	m_homebutton_down |= is_home_down();
 
 	// todo fill position api from wiimote
@@ -118,12 +124,14 @@ void WPADController::WPADRead(WPADStatus_t* status)
 		WPADCLStatus_t* ex_status = (WPADCLStatus_t*)status;
 		memset(ex_status, 0x00, sizeof(*ex_status));
 		ex_status->clButton = button;
-		
+
+		// Here
 		auto axis = get_axis();
 		axis *= 2048.0f;
 		ex_status->clLStickX = (uint16)axis.x;
 		ex_status->clLStickY = (uint16)axis.y;
 
+		// Here
 		auto rotation = get_rotation();
 		rotation *= 2048.0f;
 		ex_status->clRStickX = (uint16)rotation.x;
@@ -158,11 +166,13 @@ void WPADController::WPADRead(WPADStatus_t* status)
 		ex_status->cable = TRUE;
 		ex_status->charge = TRUE;
 
+		// Here
 		auto axis = get_axis();
 		axis *= 2048.0f;
 		ex_status->ucLStickX = (uint16)axis.x;
 		ex_status->ucLStickY = (uint16)axis.y;
 
+		// Here
 		auto rotation = get_rotation();
 		rotation *= 2048.0f;
 		ex_status->ucRStickX = (uint16)rotation.x;
@@ -200,15 +210,20 @@ void WPADController::KPADRead(KPADStatus_t& status, const BtnRepeat& repeat)
 	}
 
 	controllers_update_states();
+	// std::shared_lock lock(m_mutex);
+	// for (const auto& controller : m_controllers)
+	// Here
 	for (uint32 i = 1; i < get_highest_mapping_id(); ++i)
 	{
 		if (is_mapping_down(i))
 		{
+			// Here
 			const uint32 value = get_emulated_button_flag(m_data_format, i);
 			*hold |= value;
 		}
 	}
 
+	// Here
 	m_homebutton_down |= is_home_down();
 	
 	// button repeat
@@ -231,7 +246,9 @@ void WPADController::KPADRead(KPADStatus_t& status, const BtnRepeat& repeat)
 	}
 
 	// axis
+	// Here
 	const auto axis = get_axis();
+	// Here
 	const auto rotation = get_rotation();
 
 	*release = m_last_holdvalue & ~*hold;
@@ -255,8 +272,10 @@ void WPADController::KPADRead(KPADStatus_t& status, const BtnRepeat& repeat)
 		status.mpls.dir.Z.z = 1;
 	}
 
+	// Here
 	if (has_motion())
 	{
+		// Here
 		auto motion_sample = get_motion_data();
 
 		glm::vec3 acc;
@@ -309,10 +328,12 @@ void WPADController::KPADRead(KPADStatus_t& status, const BtnRepeat& repeat)
 		}
 	}
 
+	// Here
 	if (has_position())
 	{
 		status.dpd_valid_fg = 1;
 
+		// Here
 		const auto position = get_position();
 
 		const auto pos = (position * 2.0f) - 1.0f;
@@ -331,8 +352,10 @@ void WPADController::KPADRead(KPADStatus_t& status, const BtnRepeat& repeat)
 		status.ex_status.fs.stick.x = axis.x;
 		status.ex_status.fs.stick.y = axis.y;
 
+		// Here
 		if(has_second_motion())
 		{
+			// Here
 			auto motion_sample = get_second_motion_data();
 
 			glm::vec3 acc;

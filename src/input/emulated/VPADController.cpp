@@ -45,19 +45,25 @@ enum ControllerVPADMapping2 : uint32
 	VPAD_REPEAT = 0x80000000,
 };
 
+// TODO Figure out how to pass a physical controller through here.
 void VPADController::VPADRead(VPADStatus_t& status, const BtnRepeat& repeat)
 {
 	controllers_update_states();
+	// std::shared_lock lock(m_mutex);
+	// for (const auto& controller : m_controllers)
 	m_mic_active = false;
 	m_screen_active = false;
 	for (uint32 i = kButtonId_A; i < kButtonId_Max; ++i)
 	{
 		// axis will be aplied later
+		// Here
 		if (is_axis_mapping(i))
 			continue;
 
+		// Here
 		if (is_mapping_down(i))
 		{
+			// Here
 			const uint32 value = get_emulated_button_flag(i);
 			if (value == 0)
 			{
@@ -74,8 +80,10 @@ void VPADController::VPADRead(VPADStatus_t& status, const BtnRepeat& repeat)
 		}
 	}
 
+	// Here
 	m_homebutton_down |= is_home_down();
 
+	// Here
 	const auto axis = get_axis();
 	status.leftStick.x = axis.x;
 	status.leftStick.y = axis.y;
@@ -94,6 +102,7 @@ void VPADController::VPADRead(VPADStatus_t& status, const BtnRepeat& repeat)
 	else if (axis.y >= kAxisThreshold || (HAS_FLAG(last_hold, VPAD_STICK_L_UP) && axis.y >= kHoldAxisThreshold))
 		status.hold |= VPAD_STICK_L_UP;
 
+	// Here
 	const auto rotation = get_rotation();
 	status.rightStick.x = rotation.x;
 	status.rightStick.y = rotation.y;
@@ -471,13 +480,13 @@ uint32 VPADController::get_emulated_button_flag(uint32 id) const
 	return 0;
 }
 
-glm::vec2 VPADController::get_axis() const
+glm::vec2 VPADController::get_axis(const PhysicalControllerPtr& physical_controller) const
 {
-	const auto left = get_axis_value(kButtonId_StickL_Left);
-	const auto right = get_axis_value(kButtonId_StickL_Right);
+	const auto left = get_axis_value(kButtonId_StickL_Left, physical_controller);
+	const auto right = get_axis_value(kButtonId_StickL_Right, physical_controller);
 
-	const auto up = get_axis_value(kButtonId_StickL_Up);
-	const auto down = get_axis_value(kButtonId_StickL_Down);
+	const auto up = get_axis_value(kButtonId_StickL_Up, physical_controller);
+	const auto down = get_axis_value(kButtonId_StickL_Down, physical_controller);
 
 	glm::vec2 result;
 	result.x = (left > right) ? -left : right;
@@ -485,25 +494,18 @@ glm::vec2 VPADController::get_axis() const
 	return length(result) > 1.0f ? normalize(result) : result;
 }
 
-glm::vec2 VPADController::get_rotation() const
+glm::vec2 VPADController::get_rotation(const PhysicalControllerPtr& physical_controller) const
 {
-	const auto left = get_axis_value(kButtonId_StickR_Left);
-	const auto right = get_axis_value(kButtonId_StickR_Right);
+	const auto left = get_axis_value(kButtonId_StickR_Left, physical_controller);
+	const auto right = get_axis_value(kButtonId_StickR_Right, physical_controller);
 
-	const auto up = get_axis_value(kButtonId_StickR_Up);
-	const auto down = get_axis_value(kButtonId_StickR_Down);
+	const auto up = get_axis_value(kButtonId_StickR_Up, physical_controller);
+	const auto down = get_axis_value(kButtonId_StickR_Down, physical_controller);
 
 	glm::vec2 result;
 	result.x = (left > right) ? -left : right;
 	result.y = (up > down) ? up : -down;
 	return length(result) > 1.0f ? normalize(result) : result;
-}
-
-glm::vec2 VPADController::get_trigger() const
-{
-	const auto left = get_axis_value(kButtonId_ZL);
-	const auto right = get_axis_value(kButtonId_ZR);
-	return {left, right};
 }
 
 bool VPADController::set_default_mapping(const std::shared_ptr<ControllerBase>& controller)

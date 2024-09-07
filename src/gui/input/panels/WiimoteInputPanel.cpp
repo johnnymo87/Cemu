@@ -239,7 +239,7 @@ void WiimoteInputPanel::on_timer(const EmulatedControllerPtr& emulated_controlle
 
 	if (emulated_controller)
 	{
-		const auto axis = emulated_controller->get_axis();
+		const auto axis = emulated_controller->get_axis(controller);
 		m_draw->SetAxisValue(axis);
 	}
 }

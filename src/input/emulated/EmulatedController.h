@@ -48,9 +48,8 @@ public:
 	virtual void update();
 	void controllers_update_states();
 
-	virtual glm::vec2 get_axis() const = 0;
-	virtual glm::vec2 get_rotation() const = 0;
-	virtual glm::vec2 get_trigger() const = 0;
+	virtual glm::vec2 get_axis(const PhysicalControllerPtr& physical_controller) const = 0;
+	virtual glm::vec2 get_rotation(const PhysicalControllerPtr& physical_controller) const = 0;
 
 	void start_rumble();
 	void stop_rumble();
@@ -106,22 +105,28 @@ protected:
 	std::string m_profile_name = "default";
 
 	mutable std::shared_mutex m_mutex;
-	std::vector<std::shared_ptr<ControllerBase>> m_controllers;
+	std::vector<PhysicalControllerPtr> m_controllers;
 
 	float get_axis_value(uint64 mapping) const;
 	bool m_rumble = false;
 
+	// In Cemu's "input" UI, the user maps physical controller buttons to emulated controller buttons. Cemu has a
+	// "buddy controller" feature, where the user can map multiple physical controllers to one emulated controller.
+	//
+	// We use the following data structure to eumulated-to-physical button mappings in a one-to-many fashion:
+	// { emulated button id, [{ physical controller, physical button id }] }
 	struct Mapping
 	{
-		std::weak_ptr<ControllerBase> controller;
-		uint64 button;
+		std::weak_ptr<ControllerBase> physical_controller;
+		uint64 physical_button;
 	};
-	std::unordered_map<uint64, Mapping> m_mappings;
+	std::unordered_map<uint64, std::vector<Mapping>> m_mappings;
 
 	bool m_homebutton_down = false;
 };
 
 using EmulatedControllerPtr = std::shared_ptr<EmulatedController>;
+using PhysicalControllerPtr = std::shared_ptr<ControllerBase>;
 
 template <>
 struct fmt::formatter<EmulatedController::Type> : formatter<string_view> {

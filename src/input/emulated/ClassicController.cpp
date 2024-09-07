@@ -92,13 +92,13 @@ std::string_view ClassicController::get_button_name(ButtonId id)
 	}
 }
 
-glm::vec2 ClassicController::get_axis() const
+glm::vec2 ClassicController::get_axis(const PhysicalControllerPtr& physical_controller) const
 {
-	const auto left = get_axis_value(kButtonId_StickL_Left);
-	const auto right = get_axis_value(kButtonId_StickL_Right);
+	const auto left = get_axis_value(kButtonId_StickL_Left, physical_controller);
+	const auto right = get_axis_value(kButtonId_StickL_Right, physical_controller);
 
-	const auto up = get_axis_value(kButtonId_StickL_Up);
-	const auto down = get_axis_value(kButtonId_StickL_Down);
+	const auto up = get_axis_value(kButtonId_StickL_Up, physical_controller);
+	const auto down = get_axis_value(kButtonId_StickL_Down, physical_controller);
 
 	glm::vec2 result;
 	result.x = (left > right) ? -left : right;
@@ -106,25 +106,18 @@ glm::vec2 ClassicController::get_axis() const
 	return length(result) > 1.0f ? normalize(result) : result;
 }
 
-glm::vec2 ClassicController::get_rotation() const
+glm::vec2 ClassicController::get_rotation(const PhysicalControllerPtr& physical_controller) const
 {
-	const auto left = get_axis_value(kButtonId_StickR_Left);
-	const auto right = get_axis_value(kButtonId_StickR_Right);
+	const auto left = get_axis_value(kButtonId_StickR_Left, physical_controller);
+	const auto right = get_axis_value(kButtonId_StickR_Right, physical_controller);
 
-	const auto up = get_axis_value(kButtonId_StickR_Up);
-	const auto down = get_axis_value(kButtonId_StickR_Down);
+	const auto up = get_axis_value(kButtonId_StickR_Up, physical_controller);
+	const auto down = get_axis_value(kButtonId_StickR_Down, physical_controller);
 
 	glm::vec2 result;
 	result.x = (left > right) ? -left : right;
 	result.y = (up > down) ? up : -down;
 	return length(result) > 1.0f ? normalize(result) : result;
-}
-
-glm::vec2 ClassicController::get_trigger() const
-{
-	const auto left = get_axis_value(kButtonId_ZL);
-	const auto right = get_axis_value(kButtonId_ZR);
-	return { left, right };
 }
 
 bool ClassicController::set_default_mapping(const std::shared_ptr<ControllerBase>& controller)

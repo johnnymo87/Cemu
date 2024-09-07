@@ -52,9 +52,8 @@ public:
 
 	bool set_default_mapping(const std::shared_ptr<ControllerBase>& controller) override;
 
-	glm::vec2 get_axis() const override;
-	glm::vec2 get_rotation() const override;
-	glm::vec2 get_trigger() const override;
+	glm::vec2 get_axis(const PhysicalControllerPtr& physical_controller) const override;
+	glm::vec2 get_rotation(const PhysicalControllerPtr& physical_controller) const override;
 
 	void load(const pugi::xml_node& node) override;
 	void save(pugi::xml_node& node) override;

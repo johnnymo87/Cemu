@@ -73,13 +73,13 @@ bool WiimoteController::set_default_mapping(const std::shared_ptr<ControllerBase
 	return mapping_updated;
 }
 
-glm::vec2 WiimoteController::get_axis() const
+glm::vec2 WiimoteController::get_axis(const PhysicalControllerPtr& physical_controller) const
 {
-	const auto left = get_axis_value(kButtonId_Nunchuck_Left);
-	const auto right = get_axis_value(kButtonId_Nunchuck_Right);
+	const auto left = get_axis_value(kButtonId_Nunchuck_Left, physical_controller);
+	const auto right = get_axis_value(kButtonId_Nunchuck_Right, physical_controller);
 
-	const auto up = get_axis_value(kButtonId_Nunchuck_Up);
-	const auto down = get_axis_value(kButtonId_Nunchuck_Down);
+	const auto up = get_axis_value(kButtonId_Nunchuck_Up, physical_controller);
+	const auto down = get_axis_value(kButtonId_Nunchuck_Down, physical_controller);
 
 	glm::vec2 result;
 	result.x = (left > right) ? -left : right;
@@ -87,12 +87,7 @@ glm::vec2 WiimoteController::get_axis() const
 	return result;
 }
 
-glm::vec2 WiimoteController::get_rotation() const
-{
-	return {};
-}
-
-glm::vec2 WiimoteController::get_trigger() const
+glm::vec2 WiimoteController::get_rotation(const PhysicalControllerPtr& physical_controller) const
 {
 	return {};
 }

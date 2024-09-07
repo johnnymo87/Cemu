@@ -251,11 +251,12 @@ void EmulatedController::clear_controllers()
 	m_controllers.clear();
 }
 
-float EmulatedController::get_axis_value(uint64 mapping) const
+float EmulatedController::get_axis_value(uint64 mapping, const PhysicalControllerPtr& physical_controller) const
 {
 	const auto it = m_mappings.find(mapping);
 	if (it != m_mappings.cend())
 	{
+		// TODO Scan the mappings for the matching physical controller.
 		if (const auto controller = it->second.controller.lock()) {
 			return controller->get_axis_value(it->second.button);
 		}

@@ -198,7 +198,7 @@ void InputPanel::set_selected_controller(const EmulatedControllerPtr& emulated_c
 		if (mapping <= 0)
 			continue;
 
-		const auto mapping_controller = emulated_controller->get_mapping_controller(mapping);
+		const auto mapping_controller = emulated_controller->get_mapping_controller(mapping, controller);
 		if (!mapping_controller)
 			continue;
 

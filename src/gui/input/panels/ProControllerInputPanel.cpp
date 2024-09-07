@@ -122,8 +122,8 @@ void ProControllerInputPanel::on_timer(const EmulatedControllerPtr& emulated_con
 
 	if (emulated_controller)
 	{
-		const auto axis = emulated_controller->get_axis();
-		const auto rotation = emulated_controller->get_rotation();
+		const auto axis = emulated_controller->get_axis(controller_base);
+		const auto rotation = emulated_controller->get_rotation(controller_base);
 
 		m_left_draw->SetAxisValue(axis);
 		m_right_draw->SetAxisValue(rotation);
