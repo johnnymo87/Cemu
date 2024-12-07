@@ -194,7 +194,17 @@ The rest of this section will walk you through the process of setting up and bui
 1. Install dependencies.
 
    ```bash
-   brew install boost git cmake llvm nasm ninja pkg-config molten-vk
+   brew install \
+     automake \
+     boost \
+     cmake \
+     git \
+     libtool \
+     llvm \
+     molten-vk \
+     nasm \
+     ninja \
+     pkg-config
    ```
 
 1. Clone the Cemu repository with the `--recursive` flag to also clone the dependencies that it submodules.
@@ -212,7 +222,12 @@ The rest of this section will walk you through the process of setting up and bui
 1. Run cmake to generate the build files.
 
    ```bash
-   cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ -G Ninja
+   cmake \
+     -S . \
+     -B build \
+     -DCMAKE_BUILD_TYPE=release \
+     -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+     -G Ninja
    ```
 
 ### Every time setup before compiling Cemu for either kind of Mac
@@ -247,7 +262,8 @@ Some of the following steps should be done every time you wish to compile Cemu, 
 1. :soap: Update the Cemu repository and its submodules.
 
    ```bash
-   git pull --recurse-submodules
+   git fetch origin && git checkout origin/main
+   git submodule update --init
    ```
 
    * **Note:** This step is optional and only needs to be done if there are updates to the Cemu repository or its submodules.
@@ -255,7 +271,13 @@ Some of the following steps should be done every time you wish to compile Cemu, 
 1. :soap: If during the previous step you see that you pulled in changes to `CMakeLists.txt`, rerun cmake to regenerate the build files.
 
    ```bash
-   cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ -G Ninja
+   cmake \
+     -S . \
+     -B build \
+     -DCMAKE_BUILD_TYPE=release \
+     -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+     -DMACOS_BUNDLE=ON \
+     -G Ninja
    ```
 
 ### Compile Cemu using cmake and clang for either kind of Mac
